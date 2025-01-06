@@ -1,5 +1,5 @@
 import FoodList from "./FoodList";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import getFoods from "../api";
 
 function App() {
@@ -8,10 +8,15 @@ function App() {
   const [cursor, setCursor] = useState("");
   const [isError, setIsErorr] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const inputRef = useRef(null);
+
   const orderItems = items.sort((a, b) => b[order] - a[order]);
+
   const handleCalorieClick = () => {
     setOrder("calorie");
   };
+
   const handleNewsteCLick = () => {
     setOrder("createdAt");
   };
@@ -44,14 +49,20 @@ function App() {
     setCursor(nextCursor);
   };
   useEffect(() => {
-    handleLoad({ order });
-  }, [order]);
+    handleLoad({ order, search });
+  }, [order, search]);
 
   const handleLoadMore = () => {
     handleLoad({
       order,
       cursor,
+      search,
     });
+  };
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    console.log(e.target);
+    setSearch(e.target["search"].value);
   };
   return (
     <div>
@@ -59,6 +70,10 @@ function App() {
         <button onClick={handleNewsteCLick}>최신순</button>
         <button onClick={handleCalorieClick}>칼로리순</button>
       </div>
+      <form onSubmit={handleSearchSubmit}>
+        <input name="search" />
+        <button type="submit">검색</button>
+      </form>
       <FoodList items={orderItems} onDelete={handelDelete} />
 
       {cursor && (
