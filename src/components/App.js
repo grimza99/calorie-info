@@ -1,15 +1,14 @@
 import FoodList from "./FoodList";
 import { useEffect, useState, useRef } from "react";
 import getFoods from "../api";
-
+import FoodForm from "./FoodForm";
 function App() {
   const [items, setItems] = useState([]);
   const [order, setOrder] = useState("createdAt");
   const [cursor, setCursor] = useState("");
-  const [isError, setIsErorr] = useState(null);
+  const [isError, setIsError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState("");
-  const inputRef = useRef(null);
 
   const orderItems = items.sort((a, b) => b[order] - a[order]);
 
@@ -17,23 +16,23 @@ function App() {
     setOrder("calorie");
   };
 
-  const handleNewsteCLick = () => {
+  const handleNewestCLick = () => {
     setOrder("createdAt");
   };
 
   const handelDelete = (id) => {
-    const nextItmes = items.filter((item) => item.id !== id);
-    setItems(nextItmes);
+    const nextItems = items.filter((item) => item.id !== id);
+    setItems(nextItems);
   };
 
   const handleLoad = async (options) => {
     let result;
     try {
       setIsLoading(true);
-      setIsErorr(null);
+      setIsError(null);
       result = await getFoods(options);
     } catch (error) {
-      setIsErorr(error);
+      setIsError(error);
     } finally {
       setIsLoading(false);
     }
@@ -67,13 +66,14 @@ function App() {
   return (
     <div>
       <div>
-        <button onClick={handleNewsteCLick}>최신순</button>
+        <button onClick={handleNewestCLick}>최신순</button>
         <button onClick={handleCalorieClick}>칼로리순</button>
       </div>
       <form onSubmit={handleSearchSubmit}>
         <input name="search" />
         <button type="submit">검색</button>
       </form>
+      <FoodForm />
       <FoodList items={orderItems} onDelete={handelDelete} />
 
       {cursor && (
